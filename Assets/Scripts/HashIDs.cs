@@ -5,12 +5,14 @@ using UnityEngine;
 public class HashIDs : MonoBehaviour {
 
     public int speedFloat;
-    public int walkState;
+    public int horizontalState;
+    public int strafeState;
 
     // Use this for initialization
     void Start () {
         speedFloat = Animator.StringToHash("Speed");
-        walkState = Animator.StringToHash("Walk");
+        horizontalState = Animator.StringToHash("Horizontal");
+        strafeState = Animator.StringToHash("Strafing");
 	}
 	
 	// Update is called once per frame

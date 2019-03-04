@@ -18,27 +18,39 @@ public class PlayerMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
-        float v = Input.GetAxis("Vertical");
-        //float mouseX = Input.GetAxis("MouseX");
+        float vertical = Input.GetAxis("Vertical");
+        float horizontal = Input.GetAxis("Horizontal");
 
-        //Rotating(mouseX);
-        MovementManager(v);
+        MovementManager(vertical, horizontal);
+
 	}
 
-    void MovementManager(float vertical)
+    void MovementManager(float vertical, float horizontal)
     {
-        if(vertical>0)
+        Debug.Log(vertical);
+        if (vertical>0)
         {
-            anim.SetFloat(hash.speedFloat, 1.5f, speedDampTime, Time.deltaTime);
+            float setSpeed = 1.5f;
+            if(Input.GetAxis("Sprint")>0)
+            {
+                setSpeed = 2.5f;
+            }
+            anim.SetFloat(hash.speedFloat, setSpeed, speedDampTime, Time.deltaTime);
+        }
+        else if(vertical<0)
+        {
+            anim.SetFloat(hash.speedFloat, -1.5f, speedDampTime, Time.deltaTime);
+            anim.SetFloat(hash.horizontalState, horizontal);
+            return;
         }
         else
         {
             anim.SetFloat(hash.speedFloat, 0);
         }
-    }
+        
+        Rigidbody rb = this.GetComponent<Rigidbody>();
 
-    void Rotating(float mouseXInput)
-    {
-
+        Quaternion deltaRotation = Quaternion.Euler(0f, horizontal, 0f);
+        rb.MoveRotation(rb.rotation * deltaRotation);
     }
 }
