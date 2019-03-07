@@ -27,7 +27,6 @@ public class PlayerMovement : MonoBehaviour {
 
     void MovementManager(float vertical, float horizontal)
     {
-        Debug.Log(vertical);
         if (vertical>0)
         {
             float setSpeed = 1.5f;
