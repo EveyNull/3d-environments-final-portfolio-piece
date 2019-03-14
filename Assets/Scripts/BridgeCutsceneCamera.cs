@@ -24,7 +24,6 @@ public class BridgeCutsceneCamera : MonoBehaviour {
 	void Update () {
 		if(cutscenePlaying)
         {
-            Debug.Log(overShoulderDest.position);
             timeElapsed += Time.deltaTime;
             float step = speed * Time.deltaTime;
             if (movingToCutsceneDest)
