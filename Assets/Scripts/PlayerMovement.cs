@@ -6,12 +6,19 @@ public class PlayerMovement : MonoBehaviour {
 
     public float speedDampTime = 0.01f;
     public float sensitivityX = 1.0f;
+    public float cameraMoveSpeed = 10.0f;
+
+    public Transform overShoulderCameraDest;
 
     private Animator anim;
     private HashIDs hash;
-    
-	// Use this for initialization
-	void Awake () {
+
+    private Camera mainCamera;
+
+    // Use this for initialization
+    void Awake ()
+    {
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         anim = GetComponent<Animator>();
         hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIDs>();
 	}
@@ -22,6 +29,11 @@ public class PlayerMovement : MonoBehaviour {
         float horizontal = Input.GetAxis("Horizontal");
 
         MovementManager(vertical, horizontal);
+
+        float step = cameraMoveSpeed * Time.deltaTime;
+
+        mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, overShoulderCameraDest.transform.position, step);
+        mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, overShoulderCameraDest.rotation, step);
 
 	}
 

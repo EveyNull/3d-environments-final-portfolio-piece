@@ -8,6 +8,12 @@ public class CatapultController : MonoBehaviour {
     // This is to stop the player immediately snapping to the catapult again after trying to leave
     // (Or vice versa)
     public float stateChangeBufferTime = 0.5f;
+    public float cameraMoveSpeed;
+
+    public Transform catapultCameraDest;
+    public Transform overShoulderCameraDest;
+
+    private Camera mainCamera;
 
     private bool playerInControl;
     private float elapsedTime = 0f;
@@ -18,6 +24,7 @@ public class CatapultController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 	}
 
     private void Update()
@@ -35,7 +42,7 @@ public class CatapultController : MonoBehaviour {
 
     // Update is called once per frame
     void FixedUpdate () {
-		if(Input.GetButtonDown("Interact")
+		if(Input.GetButtonDown("Catapult")
             && playerInControl
             && canChangeState)
         {
@@ -49,6 +56,8 @@ public class CatapultController : MonoBehaviour {
             player.GetComponent<CapsuleCollider>().enabled = true;
             canChangeState = false;
 
+            mainCamera.transform.SetParent(overShoulderCameraDest.transform.parent.transform);
+
         }
 
         if(playerInControl)
@@ -61,13 +70,16 @@ public class CatapultController : MonoBehaviour {
                 transform.position, transform.up, Input.GetAxis("Horizontal")*0.3f);
             player.transform.localPosition = new Vector3(0, 0, 0);
 
+            float step = cameraMoveSpeed * Time.deltaTime;
+            mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, catapultCameraDest.position, step);
+            mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, catapultCameraDest.rotation, step*2);
         }
 	}
 
     private void OnTriggerStay(Collider other)
     {
         if (other.tag.Equals("InteractionCollider")
-            && Input.GetButtonDown("Interact")
+            && Input.GetButtonDown("Catapult")
             && canChangeState)
         {
             if(!playerInControl)
@@ -82,6 +94,8 @@ public class CatapultController : MonoBehaviour {
                     RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
                 player.GetComponent<CapsuleCollider>().enabled = false;
                 canChangeState = false;
+
+                mainCamera.transform.SetParent(null);
             }
         }
     }
