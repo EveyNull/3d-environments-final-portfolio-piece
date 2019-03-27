@@ -6,6 +6,8 @@ TagManager:
   tags:
   - InteractionCollider
   - BridgeComponent
+  - GroundCollider
+  - WaterCollider
   layers:
   - Default
   - TransparentFX
