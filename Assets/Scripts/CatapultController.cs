@@ -24,6 +24,8 @@ public class CatapultController : MonoBehaviour {
     public float maximumVelocity = 40.0f;
     public float alterVelocityPerFrame = 0.3f;
 
+    private bool maxVelocityReached = false;
+
     private Camera mainCamera;
 
     private bool playerInControl;
@@ -35,8 +37,10 @@ public class CatapultController : MonoBehaviour {
 
     private GameObject player;
 
-	// Use this for initialization
-	void Start () {
+    private float initHeightAtDist;
+
+    // Use this for initialization
+    void Start () {
         player = GameObject.FindGameObjectWithTag("Player");
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
 	}
@@ -68,7 +72,9 @@ public class CatapultController : MonoBehaviour {
                     particle.Clear();
                     particle.Stop();
                 }
+                placeHolderProjectile.GetComponentInChildren<Light>().enabled = false;
                 fireVelocity = 0.0f;
+                maxVelocityReached = false;
                 firing = false;
             }
 
@@ -82,6 +88,7 @@ public class CatapultController : MonoBehaviour {
                         particle.Play();
                     }
                 }
+                placeHolderProjectile.GetComponentInChildren<Light>().enabled = true;
             }
             
             if(Input.GetButtonDown("Interact"))
@@ -93,6 +100,10 @@ public class CatapultController : MonoBehaviour {
                 && playerInControl)
             {
                 fireVelocity = Mathf.Clamp(fireVelocity + alterVelocityPerFrame, 0.0f, maximumVelocity);
+                if (fireVelocity >= maximumVelocity)
+                {
+                    maxVelocityReached = true;
+                }
                 if (torsion.transform.eulerAngles.x < 350.0f)
                 {
                     torsion.transform.rotation = Quaternion.RotateTowards(torsion.transform.rotation, torsionDownDest.rotation, Time.deltaTime * 75.0f);
@@ -111,7 +122,8 @@ public class CatapultController : MonoBehaviour {
     void FixedUpdate () {
 		if(Input.GetButtonDown("Catapult")
             && playerInControl
-            && canChangeState)
+            && canChangeState
+            && !firing)
         {
             playerInControl = false;
             player.GetComponent<PlayerMovement>().enabled = true;
@@ -129,19 +141,45 @@ public class CatapultController : MonoBehaviour {
 
         if(playerInControl)
         {
-            transform.GetComponentInParent<Rigidbody>().AddForce(
-            -transform.forward*Input.GetAxis("Vertical")*15f
-            , ForceMode.Acceleration);
-            Rigidbody parent = GetComponentInParent<Rigidbody>();
-            transform.parent.transform.RotateAround(
-                transform.position, transform.up, Input.GetAxis("Horizontal")*0.3f);
+            
             player.transform.localPosition = new Vector3(0, 0, 0);
 
             float step = cameraMoveSpeed * Time.deltaTime;
-            mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, catapultCameraDest.position, step);
-            mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, catapultCameraDest.rotation, step*2);
+            if(firing)
+            {
+                if (!maxVelocityReached)
+                {
+                    mainCamera.transform.Translate(Vector3.back * step*0.5f);
+                    mainCamera.fieldOfView = Mathf.Clamp(mainCamera.fieldOfView + step * 3, 60, 130);
+                }
+            }
+            else
+            {
+
+                mainCamera.fieldOfView = Mathf.Clamp(mainCamera.fieldOfView - step * 10, 60, 130);
+                mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, catapultCameraDest.position, step*3);
+                mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, catapultCameraDest.rotation, step * 2);
+                transform.GetComponentInParent<Rigidbody>().AddForce(
+                    -transform.forward * Input.GetAxis("Vertical") * 15f
+                    , ForceMode.Acceleration);
+                Rigidbody parent = GetComponentInParent<Rigidbody>();
+                transform.parent.transform.RotateAround(
+                    transform.position, transform.up, Input.GetAxis("Horizontal") * 0.3f);
+            }
         }
 	}
+
+    // Calculate the frustum height at a given distance from the camera.
+    float FrustumHeightAtDistance(float distance)
+    {
+        return 2.0f * distance * Mathf.Tan(mainCamera.fieldOfView * 0.5f * Mathf.Deg2Rad);
+    }
+
+    // Calculate the FOV needed to get a given frustum height at a given distance.
+    float FOVForHeightAndDistance(float height, float distance)
+    {
+        return 2.0f * Mathf.Atan(height * 0.5f / distance) * Mathf.Rad2Deg;
+    }
 
     private void OnTriggerStay(Collider other)
     {
