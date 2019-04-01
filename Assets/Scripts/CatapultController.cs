@@ -162,7 +162,6 @@ public class CatapultController : MonoBehaviour {
                 transform.GetComponentInParent<Rigidbody>().AddForce(
                     -transform.forward * Input.GetAxis("Vertical") * 15f
                     , ForceMode.Acceleration);
-                Rigidbody parent = GetComponentInParent<Rigidbody>();
                 transform.parent.transform.RotateAround(
                     transform.position, transform.up, Input.GetAxis("Horizontal") * 0.3f);
             }

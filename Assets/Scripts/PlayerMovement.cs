@@ -5,10 +5,10 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
     public float speedDampTime = 0.01f;
-    public float sensitivityX = 1.0f;
     public float cameraMoveSpeed = 10.0f;
 
     public Transform overShoulderCameraDest;
+    public Transform cameraTarget;
 
     private Animator anim;
     private HashIDs hash;
@@ -31,9 +31,20 @@ public class PlayerMovement : MonoBehaviour {
         MovementManager(vertical, horizontal);
 
         float step = cameraMoveSpeed * Time.deltaTime;
-
+        
+        
         mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, overShoulderCameraDest.transform.position, step);
         mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, overShoulderCameraDest.rotation, step);
+
+        RaycastHit hit; 
+        Vector3 heading = mainCamera.transform.position - cameraTarget.position;
+        float distance = heading.magnitude;
+        Vector3 direction = heading / distance;
+
+        if (Physics.Raycast(mainCamera.transform.position, direction, out hit))
+        {
+            mainCamera.transform.position = hit.transform.position;
+        }
 
 	}
 
