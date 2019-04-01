@@ -33,17 +33,23 @@ public class PlayerMovement : MonoBehaviour {
         float step = cameraMoveSpeed * Time.deltaTime;
         
         
-        mainCamera.transform.position = Vector3.MoveTowards(mainCamera.transform.position, overShoulderCameraDest.transform.position, step);
+        Vector3 desiredPosition = Vector3.MoveTowards(mainCamera.transform.position, overShoulderCameraDest.transform.position, step);
         mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, overShoulderCameraDest.rotation, step);
 
-        RaycastHit hit; 
-        Vector3 heading = mainCamera.transform.position - cameraTarget.position;
-        float distance = heading.magnitude;
-        Vector3 direction = heading / distance;
+        RaycastHit hit;
+        Ray ray = new Ray(cameraTarget.transform.position, desiredPosition-cameraTarget.position);
+        
 
-        if (Physics.Raycast(mainCamera.transform.position, direction, out hit))
+        if (Physics.Raycast(ray, out hit,
+            Vector3.Distance(cameraTarget.transform.position, desiredPosition)))
         {
-            mainCamera.transform.position = hit.transform.position;
+            Debug.DrawRay(cameraTarget.transform.position, desiredPosition - cameraTarget.position, Color.red);
+            mainCamera.transform.position = hit.point;
+        }
+        else
+        {
+            mainCamera.transform.position = desiredPosition;
+            Debug.DrawRay(cameraTarget.transform.position, mainCamera.transform.position - cameraTarget.position, Color.green);
         }
 
 	}
