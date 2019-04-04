@@ -5,20 +5,13 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
     public float speedDampTime = 0.01f;
-    public float cameraMoveSpeed = 10.0f;
-
-    public Transform overShoulderCameraDest;
-    public Transform cameraTarget;
 
     private Animator anim;
     private HashIDs hash;
 
-    private Camera mainCamera;
-
     // Use this for initialization
     void Awake ()
     {
-        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         anim = GetComponent<Animator>();
         hash = GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIDs>();
 	}
@@ -30,52 +23,48 @@ public class PlayerMovement : MonoBehaviour {
 
         MovementManager(vertical, horizontal);
 
-        float step = cameraMoveSpeed * Time.deltaTime;
-        
-        
-        Vector3 desiredPosition = Vector3.MoveTowards(mainCamera.transform.position, overShoulderCameraDest.transform.position, step);
-        mainCamera.transform.rotation = Quaternion.RotateTowards(mainCamera.transform.rotation, overShoulderCameraDest.rotation, step);
-
-        RaycastHit hit;
-        Ray ray = new Ray(cameraTarget.transform.position, desiredPosition-cameraTarget.position);
-        
-
-        if (Physics.Raycast(ray, out hit,
-            Vector3.Distance(cameraTarget.transform.position, desiredPosition)))
-        {
-            Debug.DrawRay(cameraTarget.transform.position, desiredPosition - cameraTarget.position, Color.red);
-            mainCamera.transform.position = hit.point;
-        }
-        else
-        {
-            mainCamera.transform.position = desiredPosition;
-            Debug.DrawRay(cameraTarget.transform.position, mainCamera.transform.position - cameraTarget.position, Color.green);
-        }
-
 	}
 
     void MovementManager(float vertical, float horizontal)
     {
+        bool mustStop = true;
         if (vertical>0)
         {
-            float setSpeed = 1.5f;
-            if(Input.GetAxis("Sprint")>0)
+            if (Physics.Raycast(transform.position + transform.up + (transform.forward*1.5f), Vector3.down, 8f))
             {
-                setSpeed = 2.5f;
+                mustStop = false;
+                float setSpeed = 1.5f;
+                if (Input.GetAxis("Sprint") > 0)
+                {
+                    setSpeed = 2.5f;
+                }
+                anim.SetFloat(hash.speedFloat, setSpeed, speedDampTime, Time.deltaTime);
             }
-            anim.SetFloat(hash.speedFloat, setSpeed, speedDampTime, Time.deltaTime);
         }
-        else if(vertical<0)
+
+        if(vertical<0)
         {
-            anim.SetFloat(hash.speedFloat, -1.5f, speedDampTime, Time.deltaTime);
-            anim.SetFloat(hash.horizontalState, horizontal);
-            return;
+            if(Physics.Raycast(transform.position + transform.up - transform.forward, Vector3.down, 8f))
+            {
+                mustStop = false;
+                anim.SetFloat(hash.speedFloat, -1.5f, speedDampTime, Time.deltaTime);
+                if (Physics.Raycast(transform.position + transform.up + (transform.right * horizontal), Vector3.down, 8f))
+                {
+                    anim.SetFloat(hash.horizontalState, horizontal);
+                }
+                else
+                {
+                    anim.SetFloat(hash.horizontalState, 0f);
+                }
+                return;
+            }
         }
-        else
+
+        if (mustStop)
         {
             anim.SetFloat(hash.speedFloat, 0);
         }
-        
+
         Rigidbody rb = this.GetComponent<Rigidbody>();
 
         Quaternion deltaRotation = Quaternion.Euler(0f, horizontal, 0f);

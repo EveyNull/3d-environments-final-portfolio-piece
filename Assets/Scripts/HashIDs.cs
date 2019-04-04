@@ -8,6 +8,7 @@ public class HashIDs : MonoBehaviour {
     public int horizontalState;
     public int strafeState;
     public int catapultControlState;
+    public int onBoatState;
 
     // Use this for initialization
     void Start () {
@@ -15,6 +16,7 @@ public class HashIDs : MonoBehaviour {
         horizontalState = Animator.StringToHash("Horizontal");
         strafeState = Animator.StringToHash("Strafing");
         catapultControlState = Animator.StringToHash("CatapultControl");
+        onBoatState = Animator.StringToHash("OnBoat");
 	}
 	
 	// Update is called once per frame

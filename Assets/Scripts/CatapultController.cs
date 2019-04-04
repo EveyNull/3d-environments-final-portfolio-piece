@@ -127,6 +127,7 @@ public class CatapultController : MonoBehaviour {
         {
             playerInControl = false;
             player.GetComponent<PlayerMovement>().enabled = true;
+            mainCamera.GetComponent<OverShoulderCam>().enabled = true;
             player.GetComponent<Animator>().SetBool(
             GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIDs>().catapultControlState
             , false);
@@ -190,6 +191,7 @@ public class CatapultController : MonoBehaviour {
             {
                 playerInControl = true;
                 player.GetComponent<PlayerMovement>().enabled = false;
+                mainCamera.GetComponent<OverShoulderCam>().enabled = false;
                 player.GetComponent<Animator>().SetBool(
                 GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIDs>().catapultControlState
                 , true);
