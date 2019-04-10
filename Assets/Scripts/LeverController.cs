@@ -26,6 +26,7 @@ public class LeverController : MonoBehaviour {
             && !triggered)
         {
             triggered = true;
+            GetComponentInChildren<ParticleSystem>().gameObject.SetActive(false);
             MoveToPosition[] bridgeComponents = bridge.GetComponentsInChildren<MoveToPosition>();
             foreach (MoveToPosition component in bridgeComponents)
             {

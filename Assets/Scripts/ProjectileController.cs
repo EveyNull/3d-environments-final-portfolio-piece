@@ -5,9 +5,12 @@ using UnityEngine;
 public class ProjectileController : MonoBehaviour {
     
     private bool dying = false;
+    private bool hitSomething = false;
+    private GameObject impactCamera;
 
 	// Use this for initialization
 	void Start () {
+        impactCamera = GameObject.FindGameObjectWithTag("ImpactCamera");
         Destroy(gameObject, 20);
 	}
 	
@@ -34,6 +37,11 @@ public class ProjectileController : MonoBehaviour {
                 transform.GetChild(0).transform.rotation = Quaternion.Euler(new Vector3(90,90,90));
                 transform.GetChild(0).SetParent(null);
                 Destroy(gameObject, 1);
+            }
+            if (!hitSomething)
+            {
+                impactCamera.GetComponent<ImpactCamera>().SetTarget(gameObject);
+                hitSomething = true;
             }
         }
     }
