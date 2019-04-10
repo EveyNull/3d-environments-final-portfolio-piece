@@ -48,6 +48,7 @@ public class BridgeCutsceneCamera : MonoBehaviour {
                     {
                         cutscenePlaying = false;
                         transform.parent = playerCameraParent.transform;
+                        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<OverShoulderCam>().enabled = true;
                         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>().enabled = true;
                         GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>().enabled = true;
                     }
@@ -60,6 +61,7 @@ public class BridgeCutsceneCamera : MonoBehaviour {
     {
         cutscenePlaying = true;
         transform.parent = null;
+        GameObject.FindGameObjectWithTag("MainCamera").GetComponent<OverShoulderCam>().enabled = false;
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>().enabled = false;
         GameObject.FindGameObjectWithTag("Player").GetComponent<Animator>().enabled = false;
     }

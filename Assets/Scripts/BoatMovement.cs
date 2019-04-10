@@ -26,8 +26,6 @@ public class BoatMovement : MonoBehaviour {
 
             float step = Time.deltaTime * boatMoveSpeed;
             transform.position = Vector3.MoveTowards(transform.position, destinations[currentDestination].position, step);
-            Debug.Log(destinations.Length);
-            Debug.Log(currentDestination);
             if(transform.position == destinations[currentDestination].position
                 && currentDestination < destinations.Length-1)
             {
@@ -35,32 +33,45 @@ public class BoatMovement : MonoBehaviour {
             }
             
         }
+        if(transform.position == destinations[destinations.Length-1].position)
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.collider);
         if(collision.collider.tag.Equals("Player"))
         {
             foreach(GameObject box in boxes)
             {
+                Debug.Log(box.GetComponent<BoxesHitBehaviour>().GetBeenHit());
                 if(!box.GetComponent<BoxesHitBehaviour>().GetBeenHit())
                 {
-                    sailing = true;
-                    player = GameObject.FindGameObjectWithTag("Player");
-                    player.transform.SetParent(transform);
-                    player.GetComponent<PlayerMovement>().enabled = false;
-                    player.GetComponent<Animator>().SetBool(
-                    GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIDs>().onBoatState
-                    , true);
-                    player.transform.localPosition = new Vector3(0, 0, 0);
-                    player.transform.rotation = Quaternion.Euler(0, 90, 0);
-                    player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY |
-                        RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-                    player.GetComponent<CapsuleCollider>().enabled = false;
+                    SetSail();
                     return;
                 }
             }
         }
+    }
+
+    void SetSail()
+    {
+        sailing = true;
+        player = GameObject.FindGameObjectWithTag("Player");
+        player.transform.SetParent(transform);
+        player.GetComponent<PlayerMovement>().enabled = false;
+        player.GetComponent<Animator>().SetBool(
+        GameObject.FindGameObjectWithTag("GameController").GetComponent<HashIDs>().onBoatState
+        , true);
+        player.transform.localPosition = new Vector3(0, 0, 0);
+        player.transform.rotation = Quaternion.Euler(0, 90, 0);
+        player.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY |
+            RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        player.GetComponent<CapsuleCollider>().enabled = false;
+
+        Camera.main.transform.parent = null;
+        Camera.main.transform.position = new Vector3(0, 20, 0);
+        Camera.main.GetComponent<OverShoulderCam>().cameraStatic = true;
     }
 }
