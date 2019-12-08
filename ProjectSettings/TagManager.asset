@@ -9,6 +9,8 @@ TagManager:
   - GroundCollider
   - WaterCollider
   - Projectile
+  - Fire
+  - ImpactCamera
   layers:
   - Default
   - TransparentFX
@@ -19,8 +21,8 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
+  - Terrain
+  - Fire
   - 
   - 
   - 

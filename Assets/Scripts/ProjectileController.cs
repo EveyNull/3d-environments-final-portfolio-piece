@@ -36,7 +36,7 @@ public class ProjectileController : MonoBehaviour {
                 Destroy(transform.GetChild(0).gameObject, 10);
                 transform.GetChild(0).transform.rotation = Quaternion.Euler(new Vector3(90,90,90));
                 transform.GetChild(0).SetParent(null);
-                Destroy(gameObject, 1);
+                Destroy(gameObject, 3);
             }
             if (!hitSomething)
             {
