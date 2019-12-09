@@ -25,7 +25,6 @@ public class FireIgniter : MonoBehaviour
             if(hit.GetComponent<FireSystem>())
             {
                 hit.GetComponent<FireSystem>().Ignite();
-                Debug.Log(hit.gameObject);
             }
         }
     }

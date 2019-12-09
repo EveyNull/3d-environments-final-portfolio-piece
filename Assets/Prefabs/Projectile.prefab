@@ -4923,10 +4923,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1627606953279024}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ee8055bbe76ef44eb621aeebbde0d51, type: 3}
+  m_Script: {fileID: 11500000, guid: ff7561dca473216409741d127ab645b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ignitionRadius: 1
+  ignitionRadius: 2
 --- !u!1 &1668099489802420
 GameObject:
   m_ObjectHideFlags: 0

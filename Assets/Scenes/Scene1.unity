@@ -40427,7 +40427,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1833025719}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b736dba1ddfe85499f64b8564a95092, type: 3}
+  m_Script: {fileID: 11500000, guid: 226569f41a2300c4aada3e0f7397a25f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fireAlightLayer: 10
@@ -40435,21 +40435,21 @@ MonoBehaviour:
   - fireSettingNoise: 1
     material: {fileID: 2100000, guid: d120ec08d76b82746ad45c3e40f6bf4e, type: 2}
     igniteTime: 2
-    lifeSpanSeconds: 2.25
+    lifeSpanSeconds: 2.5
     maxFireSizeMultiplier: 2
     breaksOnExtinguish: 0
     ashesPrefab: {fileID: 0}
   - fireSettingNoise: 0
     material: {fileID: 2100000, guid: 6fc2b61421060214c8b00136fc5982d0, type: 2}
-    igniteTime: 3
-    lifeSpanSeconds: 20
+    igniteTime: 10
+    lifeSpanSeconds: 60
     maxFireSizeMultiplier: 6
     breaksOnExtinguish: 1
     ashesPrefab: {fileID: 0}
   fireSystemPrefab: {fileID: 150916721474909745, guid: 0c7dd29aedefdd1469b844f9164c8826,
     type: 3}
   meshFireDistanceBetween: 3
-  windDirection: {x: 3, y: 0, z: 0}
+  windDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &1843179724
 GameObject:
   m_ObjectHideFlags: 0

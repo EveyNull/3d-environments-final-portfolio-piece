@@ -30,6 +30,10 @@ public class FireSystem : MonoBehaviour
 
     public bool breaksOnExtinguish;
 
+    private bool igniteAtFrameEnd = false;
+
+    private float startFireRadius;
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -43,6 +47,7 @@ public class FireSystem : MonoBehaviour
         fireLight = GetComponentInChildren<Light>();
         timeIgnited = 0f;
         lifeRemaining = lifeSpanSeconds;
+        startFireRadius = GetComponent<SphereCollider>().radius;
         try
         {
             GameObject ashes = fireManager.GetMaterialProperties(GetComponentInParent<Renderer>().sharedMaterial).ashesPrefab;
@@ -54,9 +59,7 @@ public class FireSystem : MonoBehaviour
         }
         catch(NullReferenceException e)
         {
-            Debug.Log(gameObject);
-            Debug.Log(fireManager);
-            Debug.Log(GetComponentInParent<Renderer>().sharedMaterial);
+            Debug.LogException(e);
         }
         
     }
@@ -87,6 +90,11 @@ public class FireSystem : MonoBehaviour
     private void LateUpdate()
     {
         beingIgnited = false;
+        if(igniteAtFrameEnd)
+        {
+            StartFire();
+            igniteAtFrameEnd = false;
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -124,14 +132,13 @@ public class FireSystem : MonoBehaviour
     private void StartFire()
     {
         isAlight = true;
-        fireLight.enabled = true;
         gameObject.layer = fireManager.fireAlightLayer;
         foreach (ParticleSystem ps in fireParticleSystems)
         {
             ps.Play();
         }
         CountDownLife();
-        GetComponent<SphereCollider>().radius *= 3f;
+        GetComponent<SphereCollider>().radius = startFireRadius * 3f;
         AdjustParticleDirection(windDirection);
     }
 
@@ -177,7 +184,7 @@ public class FireSystem : MonoBehaviour
 
     public void Ignite()
     {
-        StartFire();
+        igniteAtFrameEnd = true;
     }
 
     public bool GetIsAlight()
